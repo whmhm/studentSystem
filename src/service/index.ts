@@ -45,7 +45,7 @@ export class Request {
         if (responseData.code === 200) {
           return res.data;
         } else {
-          const message = this.handleErr(responseData.code)
+          const message = responseData.msg
           return Promise.reject(message);
         }
       },

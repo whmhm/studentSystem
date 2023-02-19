@@ -2,7 +2,7 @@
    <a-menu class="menu" v-model:selectedKeys="current" @click="handleClick" mode="horizontal">
     <a-sub-menu key="operation">
       <template #title>
-        <a-avatar size="large" @click="home">
+        <a-avatar size="large" :src="avatar" @click="home">
           <template #icon><UserOutlined /></template>
         </a-avatar>
       </template>
@@ -14,9 +14,10 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from 'vue'
+import { defineComponent, ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { UserOutlined } from '@ant-design/icons-vue';
+import { baseURL } from "@/contents/utils";
 export default defineComponent({
   name: 'header',
   components: {
@@ -25,7 +26,10 @@ export default defineComponent({
   setup() {
     const router = useRouter()
     const current =  ref<string[]>(['operation']);
-    
+    const avatar = computed(() => {
+      const userInfo = JSON.parse(localStorage.getItem('info') || '')
+      return `${baseURL}${userInfo.avatar}` || ''
+    })
     const handleClick = (e: any) => {
       router.push(e.key)
     }
@@ -35,7 +39,8 @@ export default defineComponent({
     return {
       current,
       handleClick,
-      home
+      home,
+      avatar
     };
   }
 });

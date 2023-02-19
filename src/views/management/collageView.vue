@@ -193,7 +193,7 @@ export default defineComponent({
           }
         })
         .catch((err) => {
-          console.log('error', err);
+          console.error('error', err);
         });
     };
     // 取消

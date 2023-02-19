@@ -3,7 +3,7 @@
   <a-form ref="personForm" :model="formState" :label-col="{ span: 8 }" :wrapper-col="{ span: 16 }" autocomplete="off">
 
     <a-form-item label="头像" name="avatar">
-      <vUpload :url="avatar" :accept-type="acceptType" :avatar="true" @success="handleSuccess"></vUpload>
+      <vUpload :url="avatar" :accept-type="acceptType" avatar="avatar" @success="handleSuccess"></vUpload>
     </a-form-item>
     <a-form-item label="教育Id" name="sno" :rules="[{ required: true, message: '请填写教育Id' }]">
       <a-input v-model:value="formState.sno" disabled />
@@ -26,18 +26,18 @@
     </a-form-item>
 
     <a-form-item label="角色" name="position" :rules="[{ required: true, message: '请选择角色', trigger: 'blur'}]">
-      <a-select ref="select" v-model:value="formState.position" @focus="focus" disabled>
+      <a-select ref="select" v-model:value="formState.position"  disabled>
         <a-select-option v-for="role in POSITION" :key="role.code" :value="role.code">{{ role.label }}</a-select-option>
       </a-select>
     </a-form-item>
     <a-form-item label="院系" name="departmentId" :rules="[{ required: true, message: '请选择院系', trigger: 'blur' }]" v-if="['INSTRUCTOR','STUDENT'].includes(formState.position)">
-      <a-select ref="select" v-model:value="formState.departmentId" @focus="focus" @change="handleChange" :disabled="edit">
+      <a-select ref="select" v-model:value="formState.departmentId"  @change="handleChange" :disabled="edit">
         <a-select-option v-for="departMent in departments" :key="departMent.id" :value="departMent.id">{{ `${departMent.deptName}${departMent.className}` }}</a-select-option>
       </a-select>
     </a-form-item>
     <!-- 学生才需要选择辅导员 -->
     <a-form-item label="辅导员" name="instructorId" :rules="[{ required: true, message: '请选择辅导员', trigger: 'blur' }]" v-if="['STUDENT'].includes(formState.position)">
-      <a-select ref="select" v-model:value="formState.instructorId" @focus="focus" :disabled="edit">
+      <a-select ref="select" v-model:value="formState.instructorId"  :disabled="edit">
         <a-select-option v-for="instructor in instructors" :key="instructor.id" :value="instructor.id">{{ `${instructor.deptName}${instructor.className}` }}</a-select-option>
       </a-select>
     </a-form-item>
@@ -94,7 +94,7 @@ export default defineComponent({
       departments: [],
       instructors: [],
     });
-    const acceptType: Array<string> = reactive(['image/jpeg']);
+    const acceptType: string = 'image/jpeg';
     const rulesRef = reactive({
       email: [{ required: true, message: '请输入邮箱' }],
       password: [{ required: true, message: '请输入密码' }],

@@ -4,12 +4,20 @@
     <div class="notice-operation">
       <a-button type="primary" @click="handleAdd">新增</a-button>
     </div>
-    <a-table :columns="columns" :data-source="carouselList" :pagination="pagination" bordered>
+    <a-table
+      :columns="columns"
+      :data-source="carouselList"
+      :pagination="pagination"
+      bordered
+    >
       <template #bodyCell="{ column, text, record }">
-        <template v-if="['id', 'name'].includes(column.dataIndex)">
+        <template v-if="['id', 'title', 'url'].includes(column.dataIndex)">
           <div>
             {{ text }}
           </div>
+        </template>
+        <template v-else-if="column.dataIndex === 'status'">
+          <div>{{ text ? "是" : "否" }}</div>
         </template>
         <template v-else-if="column.dataIndex === 'operation'">
           <div class="editable-row-operations">
@@ -17,7 +25,7 @@
               <a @click="handleEdit(record)">修改</a>
             </span>
             <span>
-              <a @click="remove(record.key)">删除</a>
+              <a @click="remove(record.id)">删除</a>
             </span>
           </div>
         </template>
@@ -25,9 +33,14 @@
     </a-table>
     <!-- 新增、编辑 -->
     <a-modal v-model:visible="visible" title="上传图片" :footer="false">
-      <a-form :model="formState" name="nest-messages" :validate-messages="validateMessages">
+      <a-form :model="formData" name="nest-messages">
         <a-form-item label="图片" name="img">
-          <vUpload :url="avatar" :accept-type="acceptType" :avatar="true" @success="handleSuccess"></vUpload>
+          <vUpload
+            :url="formData.url"
+            :accept-type="acceptType"
+            avatar="carousel"
+            @success="handleSuccess"
+          ></vUpload>
         </a-form-item>
         <a-form-item name="title" label="标题">
           <a-input v-model:value="formData.title" />
@@ -38,64 +51,67 @@
             <a-radio :value="0">禁用</a-radio>
           </a-radio-group>
         </a-form-item>
-        <a-form-item class="error-infos" :wrapper-col="{ span: 14, offset: 4 }" v-bind="errorInfos">
+        <a-form-item :wrapper-col="{ span: 14, offset: 4 }">
           <a-button type="primary" @click.prevent="handleSubmit">提交</a-button>
-          <a-button style="margin-left: 10px" @click="handleCancel">取消</a-button>
+          <a-button style="margin-left: 10px" @click="handleCancel"
+            >取消</a-button
+          >
         </a-form-item>
       </a-form>
     </a-modal>
   </div>
 </template>
 <script lang="ts">
-import { defineComponent, reactive, ref, toRefs, toRaw, computed } from 'vue';
+import { defineComponent, reactive, ref, toRefs, toRaw, computed } from "vue";
 import {
   carouselUpload,
   deleteCarousel,
   selectCarousel,
   modifyCarousel,
-} from '@/service/service';
-import { Modal } from 'ant-design-vue';
-import vUpload from '@/components/upload.vue';
+} from "@/service/service";
+import { Modal, message } from "ant-design-vue";
+import vUpload from "@/components/upload.vue";
 export default defineComponent({
-  name: 'carouselView',
+  name: "carouselView",
   components: {
     vUpload,
   },
   setup() {
     const state = reactive({
-      acceptType: ['image/jpeg', 'image/png'],
+      acceptType:"image/jpeg,image/png",
       columns: [
         {
-          title: '序号',
-          dataIndex: 'serialNumber',
-          width: '10%',
+          title: "序号",
+          dataIndex: "id",
+          width: "10%",
         },
         {
-          title: '轮播图标题',
-          dataIndex: 'title',
-          width: '30%',
+          title: "轮播图标题",
+          dataIndex: "title",
+          width: "30%",
         },
         {
-          title: '轮播图链接',
-          dataIndex: 'url',
-          width: '40%',
+          title: "轮播图链接",
+          dataIndex: "url",
+          width: "40%",
         },
         {
-          title: '操作',
-          dataIndex: 'operation',
+          title: "应用状态",
+          dataIndex: "status",
+          width: "10%",
+        },
+        {
+          title: "操作",
+          dataIndex: "operation",
         },
       ],
       formData: {
-        title: '',
+        id: 0,
+        title: "",
         status: 0,
-        url: '',
+        url: "",
       },
-      carouselList: [
-        {
-          id: 12,
-          name: '2123',
-        },
-      ],
+      carouselList: [],
       pagination: {
         total: 0,
         current: 1,
@@ -118,6 +134,7 @@ export default defineComponent({
         },
       },
       visible: false,
+      modify: false, // 是否是修改
     });
 
     // 获取轮播图列表
@@ -126,43 +143,87 @@ export default defineComponent({
         start: state.pagination.offset,
         limit: state.pagination.limit,
       };
-      selectCarousel(data).then((res) => {});
+      selectCarousel(data).then(({ data }) => {
+        state.carouselList = data.result;
+        state.pagination.total = data.total;
+      });
     };
     // 移除
     const remove = (id: number) => {
       Modal.confirm({
-        title: '提示',
-        content: '确定要移除该图片吗?',
-        okText: '确定',
-        cancelText: '取消',
+        title: "提示",
+        content: "确定要移除该图片吗?",
+        okText: "确定",
+        cancelText: "取消",
         onOk() {
-          const data = {
+          const params = {
             id: id,
           };
-          deleteCarousel(data).then((res) => {});
+          deleteCarousel(params).then(({ code }) => {
+            if (code === 200) {
+              message.success("删除成功");
+              getCarousel();
+            } else {
+              message.error("删除失败");
+            }
+          });
         },
         onCancel() {},
       });
     };
     // 修改轮播图
-    const handleEdit = () => {
+    const handleEdit = (record: any) => {
+      Object.assign(state.formData, record);
+      state.modify = true;
       state.visible = true;
     };
     // 添加轮播图
     const handleAdd = () => {
+      handleCancel();
+      state.modify = false;
       state.visible = true;
     };
     // 处理轮播图上传
-    const handleSuccess = () => {};
+    const handleSuccess = (val: any) => {
+      state.formData.url = val;
+    };
     // 处理保存
     const handleSubmit = () => {
-      // 新增
-      // carouselUpload(data).then((res) => {});
-      // 修改
-      // modifyCarousel(data).then((res) => {});
+      if (state.modify) {
+        // 修改
+        modifyCarousel(state.formData).then(({ code }) => {
+          if (code === 200) {
+            message.success("修改成功");
+            getCarousel();
+          } else {
+            message.error("上传失败");
+          }
+          handleCancel();
+          state.visible = false;
+        });
+      } else {
+        // 新增
+        carouselUpload(state.formData).then(({ code }) => {
+          if (code === 200) {
+            message.success("上传成功");
+            getCarousel();
+          } else {
+            message.error("上传失败");
+          }
+          handleCancel();
+          state.visible = false;
+        });
+      }
     };
-    const handleCancel = () => {};
-    const init = () => {};
+    const handleCancel = () => {
+      state.formData.id = 0;
+      state.formData.status = 0;
+      state.formData.title = "";
+      state.formData.url = "";
+    };
+    const init = () => {
+      getCarousel();
+    };
     return {
       ...toRefs(state),
       init,

@@ -4,6 +4,8 @@ import { method } from 'lodash-es';
 type T = any
 type Result<T> = {
   data: T;
+  code?: number,
+  msg?: string,
 };
 interface login {
   sno: string,
@@ -77,13 +79,8 @@ interface deleteSubject {
   subjectId: number,
 }
 interface deleteAchievement {
-  achievementId: number,
-}
-interface addAchievement {
-  achievementValue: number,
+  sno: String,
   semesterId: number,
-  sno: string,
-  subjectId: number,
 }
 interface modifyAchievement {
   achievementId: number,
@@ -108,9 +105,18 @@ interface addUser {
   instructorId: number,
   password: string,
   phone: string,
-  position: string,
+  positions: string,
   sno: string,
   username: string
+}
+interface selectUser {
+  sno: string,
+  positions: string,
+  start: number,
+  limit: number,
+}
+interface deleteUser {
+  id: number,
 }
 // 登录接口
 export const login = (data: login): Promise<Result<T>> => {
@@ -183,11 +189,11 @@ export const carouselUpload = (data: carousel): Promise<Result<T>> => {
   })
 }
 // 删除轮播图
-export const deleteCarousel = (data: deleteCarousel): Promise<Result<T>> => {
+export const deleteCarousel = (params: deleteCarousel): Promise<Result<T>> => {
   return RequestAxios.request({
     url: '/sysRotationChart/delete',
     method: 'delete',
-    data,
+    params,
   })
 }
 // 查询轮播图列表
@@ -273,7 +279,7 @@ export const modifyDepartment = (data: department): Promise<Result<T>> => {
 
 export const findInstructor = (params: findInstructor): Promise<Result<T>> => {
   return RequestAxios.request({
-    url: '/user/selectInstructorByDeptIdexport',
+    url: '/user/selectInstructorByDeptId',
     method: 'get',
     params,
   })
@@ -318,7 +324,7 @@ export const deleteSubject = (params: deleteSubject ): Promise<Result<T>> => {
   })
 }
 // 新增成绩
-export const addAchievement = (data: addAchievement ): Promise<Result<T>> => {
+export const addAchievement = (data: any[] ): Promise<Result<T>> => {
   return RequestAxios.request({
     url: '/achievement/insert',
     method: 'post',
@@ -334,7 +340,7 @@ export const deleteAchievement = (params: deleteAchievement ): Promise<Result<T>
   })
 }
 // 修改成绩
-export const modifyAchievement = (data: modifyAchievement ): Promise<Result<T>> => {
+export const modifyAchievement = (data: any[] ): Promise<Result<T>> => {
   return RequestAxios.request({
     url: '/achievement/update',
     method: 'put',
@@ -357,11 +363,44 @@ export const addUser = (data: addUser ): Promise<Result<T>> => {
     data,
   })
 }
+// 用户查询
+export const selectUser = (params: selectUser ): Promise<Result<T>> => {
+  return RequestAxios.request({
+    url: '/user/selectPage',
+    method: 'get',
+    params,
+  })
+}
+// 用户修改
+export const modifyUser = (data: addUser ): Promise<Result<T>> => {
+  return RequestAxios.request({
+    url: '/user/update',
+    method: 'put',
+    data,
+  })
+}
+// 用户删除
+export const deleteUser = (params: deleteUser ): Promise<Result<T>> => {
+  return RequestAxios.request({
+    url: '/user/delete',
+    method: 'delete',
+    params,
+  })
+}
 // 登录用户日志 
 export const loginLog = (params: loginLog): Promise<Result<T>> => {
   return RequestAxios.request({
     url: '/sysLoginLog/selectPage',
     method: 'GET',
+    params,
+  })
+}
+// 导出
+export const importExcel = (data: any, params: any): Promise<Result<T>> => {
+  return RequestAxios.request({
+    url: '/achievement/importExcel',
+    method: 'post',
+    data,
     params,
   })
 }

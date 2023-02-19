@@ -1,11 +1,20 @@
 <template>
   <!-- 登录日志 -->
   <div>
-    <a-table :columns="columns" :data-source="newsList" bordered :pagination="pagination">
+    <a-table
+      :columns="columns"
+      :data-source="newsList"
+      bordered
+      :pagination="pagination"
+    >
       <template #bodyCell="{ column, text, record }">
         <template v-if="['name', 'age', 'address'].includes(column.dataIndex)">
           <div>
-            <a-input v-if="editableData[record.key]" v-model:value="editableData[record.key][column.dataIndex]" style="margin: -5px 0" />
+            <a-input
+              v-if="editableData[record.key]"
+              v-model:value="editableData[record.key][column.dataIndex]"
+              style="margin: -5px 0"
+            />
             <template v-else>
               {{ text }}
             </template>
@@ -16,34 +25,34 @@
   </div>
 </template>
 <script lang="ts">
-import { defineComponent, reactive, toRefs } from 'vue';
-import { loginLog } from '@/service/service';
+import { defineComponent, reactive, toRefs } from "vue";
+import { loginLog } from "@/service/service";
 
 export default defineComponent({
-  name: 'loginLog',
+  name: "loginLog",
   setup() {
     const dataList = reactive({
       newsList: [
         {
           user: 12,
-          time: '123132',
+          time: "123132",
         },
       ],
       columns: [
         {
-          title: '登陆人',
-          dataIndex: 'user',
-          width: '20%',
+          title: "登陆账号",
+          dataIndex: "userCode",
+          width: "20%",
         },
         {
-          title: '登录时间',
-          dataIndex: 'time',
-          width: '40%',
+          title: "ip",
+          dataIndex: "ip",
+          width: "40%",
         },
         {
-          title: 'ip',
-          dataIndex: 'ip',
-          width: '40%',
+          title: "登录时间",
+          dataIndex: "loginTime",
+          width: "40%",
         },
       ],
       pagination: {

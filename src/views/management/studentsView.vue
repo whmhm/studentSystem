@@ -4,7 +4,13 @@
     <div class="notice-operation">
       <a-button type="primary" @click="add">新增</a-button>
     </div>
-    <a-table :columns="columns" :data-source="studentList" bordered :pagination="pagination">
+    <a-table
+      class="table"
+      :columns="columns"
+      :data-source="studentList"
+      bordered
+      :pagination="pagination"
+    >
       <template #bodyCell="{ column, text, record }">
         <template v-if="['id', 'name'].includes(column.dataIndex)">
           <div>
@@ -25,59 +31,94 @@
     </a-table>
     <!-- 新增、编辑 -->
     <a-modal v-model:visible="visible" title="学生信息" :footer="false">
-      <a-form ref="personForm" :model="formState" :label-col="{ span: 8 }" :wrapper-col="{ span: 16 }" autocomplete="off">
+      <a-form
+        ref="personForm"
+        :model="formState"
+        :rules="rulesRef"
+        :label-col="{ span: 8 }"
+        :wrapper-col="{ span: 16 }"
+        autocomplete="off"
+      >
         <a-form-item label="头像" name="avatar">
-          <vUpload :url="avatar" :accept-type="acceptType" :avatar="true" @success="handleSuccess"></vUpload>
+          <vUpload
+            :url="formState.avatar"
+            :accept-type="acceptType"
+            avatar="avatar"
+            @success="handleSuccess"
+          ></vUpload>
         </a-form-item>
-        <a-form-item label="教育Id" name="sno" :rules="[{ required: true, message: '请填写教育Id' }]">
+        <a-form-item label="教育Id" name="sno">
           <a-input v-model:value="formState.sno" />
         </a-form-item>
 
-        <a-form-item label="用户名" name="username" :rules="[{ required: true, message: '请输入用户名' }]">
+        <a-form-item label="用户名" name="username">
           <a-input v-model:value="formState.username" />
         </a-form-item>
 
-        <a-form-item label="密码" name="password" :rules="[{ required: true, message: '请输入密码' }]">
+        <a-form-item label="密码" name="password">
           <a-input-password v-model:value="formState.password" />
         </a-form-item>
 
-        <a-form-item label="手机号" name="phone" :rules="[{ required: true, message: '请输入手机号' }]">
+        <a-form-item label="手机号" name="phone">
           <a-input v-model:value="formState.phone" />
         </a-form-item>
 
-        <a-form-item label="邮箱" name="email" :rules="[{ type: 'email', message: '请输入格式正确的邮箱',  }]">
+        <a-form-item label="邮箱" name="email">
           <a-input v-model:value="formState.email" />
         </a-form-item>
 
-        <a-form-item label="院系" name="departmentId" :rules="[{ required: true, message: '请选择院系', trigger: 'blur' }]">
-          <a-select ref="select" v-model:value="formState.departmentId" @focus="focus" @change="handleChange">
-            <a-select-option v-for="departMent in departments" :key="departMent.id" :value="departMent.id">{{ `${departMent.deptName}${departMent.className}` }}</a-select-option>
+        <a-form-item label="院系" name="departmentId">
+          <a-select
+            ref="select"
+            v-model:value="formState.departmentId"
+            @change="handleChange"
+          >
+            <a-select-option
+              v-for="departMent in departments"
+              :key="departMent.id"
+              :value="departMent.id"
+              >{{
+                `${departMent.deptName}${departMent.className}`
+              }}</a-select-option
+            >
           </a-select>
         </a-form-item>
         <!-- 学生才需要选择辅导员 -->
-        <a-form-item label="辅导员" name="instructorId" :rules="[{ required: true, message: '请选择辅导员', trigger: 'blur' }]">
-          <a-select ref="select" v-model:value="formState.instructorId" @focus="focus">
-            <a-select-option v-for="instructor in instructors" :key="instructor.id" :value="instructor.id">{{ `${instructor.deptName}${instructor.className}` }}</a-select-option>
+        <a-form-item label="辅导员" name="instructorId">
+          <a-select ref="select" v-model:value="formState.instructorId">
+            <a-select-option
+              v-for="instructor in instructors"
+              :key="instructor.id"
+              :value="instructor.id"
+              >{{ `${instructor.username}` }}</a-select-option
+            >
           </a-select>
         </a-form-item>
 
         <a-form-item :wrapper-col="{ offset: 8, span: 16 }">
           <a-button class="btn" @click="handleCancel">取消</a-button>
-          <a-button class="btn" type="primary" @click="handleSave">保存</a-button>
+          <a-button class="btn" type="primary" @click="handleSubmit"
+            >保存</a-button
+          >
         </a-form-item>
       </a-form>
-
     </a-modal>
   </div>
 </template>
 <script lang="ts">
-import { defineComponent, reactive, ref, toRefs, toRaw, computed } from 'vue';
-import { departmentList, findInstructor } from '@/service/service';
-import { Modal, Form, message } from 'ant-design-vue';
-import { toArray } from 'lodash';
-import vUpload from '@/components/upload.vue';
+import { defineComponent, reactive, toRefs, toRaw } from "vue";
+import {
+  departmentList,
+  findInstructor,
+  selectUser,
+  deleteUser,
+  addUser,
+  modifyUser,
+} from "@/service/service";
+import { Modal, Form, message } from "ant-design-vue";
+import vUpload from "@/components/upload.vue";
 export default defineComponent({
-  name: 'studentsView',
+  name: "studentsView",
   components: {
     vUpload,
   },
@@ -95,45 +136,61 @@ export default defineComponent({
       username: string;
     }
     const dataList = reactive({
+      acceptType: "image/jpeg",
       columns: [
         {
-          title: '学号',
-          dataIndex: 'sno',
-          width: '10%',
+          title: "学号",
+          dataIndex: "sno",
+          width: "10%",
         },
         {
-          title: '姓名',
-          dataIndex: 'username',
-          width: '10%',
+          title: "姓名",
+          dataIndex: "username",
+          width: "10%",
         },
         {
-          title: '邮箱',
-          dataIndex: 'email',
-          width: '10%',
+          title: "邮箱",
+          dataIndex: "email",
+          width: "10%",
         },
         {
-          title: '手机号',
-          dataIndex: 'phone',
-          width: '30%',
+          title: "学院",
+          dataIndex: "department",
+          width: "12%",
         },
         {
-          title: '操作',
-          dataIndex: 'operation',
+          title: "班级",
+          dataIndex: "className",
+          width: "12%",
+        },
+        {
+          title: "辅导员",
+          dataIndex: "instructor",
+          width: "12%",
+        },
+        {
+          title: "手机号",
+          dataIndex: "phone",
+          width: "10%",
+        },
+        {
+          title: "操作",
+          dataIndex: "operation",
         },
       ],
       formState: {
-        avatar: '',
+        avatar: "",
         departmentId: 0,
-        email: '',
+        email: "",
         id: 0,
         instructorId: 0,
-        password: '',
-        phone: '',
-        position: '',
-        sno: '',
-        username: '',
+        password: "",
+        phone: "",
+        positions: "STUDENT",
+        sno: "",
+        username: "",
       },
-      collageList: [],
+      studentList: [],
       departments: [], // 院系下拉列表
       instructors: [], // 辅导员列表
       pagination: {
@@ -159,21 +216,30 @@ export default defineComponent({
         },
       },
       visible: false,
+      modify: false,
     });
-    const formState = reactive({
-      id: 0,
-      deptName: '',
-      className: '',
-    });
-    const modify = ref<boolean>(false);
     const rulesRef = reactive({
-      name: [{ required: true, message: '请输入院系名称' }],
+      departmentId: [
+        { required: true, message: "请选择院系", trigger: "change" },
+      ],
+      instructorId: [
+        { required: true, message: "请选择辅导员", trigger: "change" },
+      ],
+      email: [
+        {
+          required: true,
+          type: "email",
+          message: "请输入格式正确的邮箱",
+          trigger: "blur",
+        },
+      ],
+      phone: [{ required: true, message: "请输入手机号", trigger: "blur" }],
+      sno: [{ required: true, message: "请输入学号", trigger: "blur" }],
+      username: [{ required: true, message: "请输入用户名", trigger: "blur" }],
+      password: [{ required: true, message: "请输入密码", trigger: "blur" }],
     });
     const useForm = Form.useForm;
-    const { resetFields, validate, validateInfos, mergeValidateInfo } = useForm(
-      formState,
-      rulesRef
-    );
+    const { resetFields, validate } = useForm(dataList.formState, rulesRef);
     // 获取院系列表
     const getDepartmentList = () => {
       departmentList().then(({ data }) => {
@@ -190,54 +256,97 @@ export default defineComponent({
       });
     };
     const getStudentList = () => {
+      const info = JSON.parse(localStorage.getItem("info") || "{}");
       const params = {
+        sno: info.sno,
+        positions: "STUDENT",
         start: dataList.pagination.offset,
         limit: dataList.pagination.limit,
       };
+      selectUser(params).then(({ data }) => {
+        dataList.studentList = data.result;
+        dataList.pagination.total = data.total;
+      });
     };
     // 移除
     const remove = (id: number) => {
       Modal.confirm({
-        title: '提示',
-        content: '确定要移除该学生吗?',
-        okText: '确定',
-        cancelText: '取消',
-        onOk() {},
+        title: "提示",
+        content: "确定要移除该用户吗?",
+        okText: "确定",
+        cancelText: "取消",
+        onOk() {
+          const params = {
+            id,
+          };
+          deleteUser(params)
+            .then((res) => {
+              message.success("移除成功");
+              getStudentList();
+            })
+            .catch((err) => {
+              message.error(err);
+            });
+        },
         onCancel() {},
       });
     };
     // 编辑
     const edit = (rowData: FormData) => {
-      modify.value = true;
+      dataList.modify = true;
+      Object.assign(dataList.formState, rowData);
       dataList.visible = true;
     };
     // 新增院系班级
     const add = () => {
-      modify.value = false;
+      handleCancel();
+      dataList.modify = false;
       dataList.visible = true;
     };
     // 提交
-    const handleSave = async () => {
+    const handleSubmit = async () => {
       validate()
         .then(() => {
-          if (modify.value) {
+          if (dataList.modify) {
             // 修改学生信息
+            modifyUser(dataList.formState).then(({ msg }) => {
+              message.success(msg);
+              getStudentList();
+              dataList.visible = false;
+            });
           } else {
-            //  新增学生
+            //  新增教师
+            addUser(toRaw(dataList.formState))
+              .then(({ code }) => {
+                message.success("新增成功");
+                getStudentList();
+                dataList.visible = false;
+              })
+              .catch((err) => {
+                message.error(err);
+              });
           }
         })
         .catch((err) => {
-          console.log('error', err);
+          console.error("error", err);
         });
     };
     // 取消
     const handleCancel = () => {
       dataList.visible = false;
+      dataList.formState.id = 0;
+      dataList.formState.departmentId = 0;
+      dataList.formState.instructorId = 0;
+      dataList.formState.avatar = "";
+      dataList.formState.email = "";
+      dataList.formState.password = "";
+      dataList.formState.phone = "";
+      dataList.formState.username = "";
       resetFields();
     };
-    const errorInfos = computed(() => {
-      return mergeValidateInfo(toArray(validateInfos));
-    });
+    const handleSuccess = (val: any) => {
+      dataList.formState.avatar = val;
+    };
     const init = () => {
       getStudentList();
       getDepartmentList();
@@ -246,15 +355,14 @@ export default defineComponent({
     return {
       init,
       ...toRefs(dataList),
-      formState,
       rulesRef,
       edit,
       remove,
       add,
-      handleSave,
+      handleSubmit,
       handleCancel,
       handleChange,
-      errorInfos,
+      handleSuccess,
     };
   },
   mounted() {
@@ -264,6 +372,17 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
+.table {
+  height: 600px;
+}
+:deep(.ant-table-cell) {
+  padding: 8px;
+  height: 50px;
+}
+.btn {
+  width: 120px;
+  margin-right: 10px;
+}
 .operations-btn {
   margin-right: 8px;
 }
