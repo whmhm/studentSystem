@@ -11,13 +11,18 @@
       bordered
     >
       <template #bodyCell="{ column, text, record }">
-        <template v-if="['id', 'title', 'url'].includes(column.dataIndex)">
+        <template v-if="['id', 'title'].includes(column.dataIndex)">
           <div>
             {{ text }}
           </div>
         </template>
         <template v-else-if="column.dataIndex === 'status'">
           <div>{{ text ? "是" : "否" }}</div>
+        </template>
+        <template v-else-if="column.dataIndex === 'url'">
+          <div>
+            <img class="mini-img" :src="`${baseURL}${text}`" />
+          </div>
         </template>
         <template v-else-if="column.dataIndex === 'operation'">
           <div class="editable-row-operations">
@@ -62,13 +67,14 @@
   </div>
 </template>
 <script lang="ts">
-import { defineComponent, reactive, ref, toRefs, toRaw, computed } from "vue";
+import { defineComponent, reactive, toRefs } from "vue";
 import {
   carouselUpload,
   deleteCarousel,
   selectCarousel,
   modifyCarousel,
 } from "@/service/service";
+import { baseURL } from '@/contents/utils'
 import { Modal, message } from "ant-design-vue";
 import vUpload from "@/components/upload.vue";
 export default defineComponent({
@@ -88,12 +94,12 @@ export default defineComponent({
         {
           title: "轮播图标题",
           dataIndex: "title",
-          width: "30%",
+          width: "20%",
         },
         {
           title: "轮播图链接",
           dataIndex: "url",
-          width: "40%",
+          width: "30%",
         },
         {
           title: "应用状态",
@@ -226,6 +232,7 @@ export default defineComponent({
     };
     return {
       ...toRefs(state),
+      baseURL,
       init,
       handleAdd,
       handleEdit,
@@ -248,5 +255,9 @@ export default defineComponent({
 .notice-operation {
   padding: 16px 0;
   text-align: right;
+}
+.mini-img{
+  width: 100px;
+  height: 50px;
 }
 </style>

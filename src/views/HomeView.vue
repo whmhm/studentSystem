@@ -4,23 +4,39 @@
     <div class="home-info">
       <a-card class="info-card" title="校园资讯">
         <div class="card-body">
-          <p class="news-items" v-for="news in newsList" :key="news.id" @click="handleView(news)">
-            <span>{{ news.noticeTitle}}</span>
-            <span class="read-count">阅读次数：{{ news.heat}}</span>
+          <p
+            class="news-items poi"
+            v-for="news in newsList"
+            :key="news.id"
+            @click="handleView(news)"
+          >
+            <span>{{ news.noticeTitle }}</span>
+            <span class="read-count">阅读次数：{{ news.heat }}</span>
           </p>
         </div>
       </a-card>
       <a-card class="info-card" title="系统公告">
         <div class="card-body">
-          <p class="news-items" v-for="notice in noticeList" :key="notice.id" @click="handleView(notice)">
-            <span>{{ notice.noticeTitle}}</span>
-            <span class="read-count">阅读次数：{{ notice.heat}}</span>
+          <p
+            class="news-items poi"
+            v-for="notice in noticeList"
+            :key="notice.id"
+            @click="handleView(notice)"
+          >
+            <span>{{ notice.noticeTitle }}</span>
+            <span class="read-count">阅读次数：{{ notice.heat }}</span>
           </p>
         </div>
       </a-card>
     </div>
     <!-- 查看 -->
-    <a-modal class="details" v-model:visible="visible" mask :footer="null" :title="`${rowDetails.noticeType===1 ? '资讯' : '公告'}详情`">
+    <a-modal
+      class="details"
+      v-model:visible="visible"
+      mask
+      :footer="null"
+      :title="`${rowDetails.noticeType === 1 ? '资讯' : '公告'}详情`"
+    >
       <p class="details-title">
         {{ rowDetails.noticeTitle }}
       </p>
@@ -30,11 +46,11 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, reactive, toRefs } from 'vue';
-import carousel from '@/components/carousel.vue';
-import { getCarousel, getNews, addHeat } from '@/service/service';
+import { defineComponent, reactive, toRefs } from "vue";
+import carousel from "@/components/carousel.vue";
+import { getCarousel, getNews, addHeat } from "@/service/service";
 export default defineComponent({
-  name: 'HomeView',
+  name: "HomeView",
   components: {
     carousel,
   },
@@ -84,10 +100,14 @@ export default defineComponent({
       getNewsList();
       getSrcList();
     };
+    const handleChange = (val: any) => {
+      console.log(val);
+    };
     return {
       init,
       handleView,
       handleConfirm,
+      handleChange,
       ...toRefs(dataList),
     };
   },

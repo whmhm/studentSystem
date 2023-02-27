@@ -2,6 +2,7 @@
 import axios from "axios";
 import type { AxiosInstance, AxiosRequestConfig, AxiosResponse } from "axios";
 import { baseURL } from "@/contents/utils";
+import { message } from 'ant-design-vue';
 
 type Result<T> = {
   code: number;
@@ -23,7 +24,7 @@ export class Request {
     this.instance.interceptors.request.use(
       (config: any) => {
         // 一般会请求拦截里面加token，用于后端的验证
-        const token = localStorage.getItem("system_token") as string
+        const token = sessionStorage.getItem("system_token") as string
 
         if (token) {
           config.headers!.Authorization = token;
@@ -45,13 +46,15 @@ export class Request {
         if (responseData.code === 200) {
           return res.data;
         } else {
-          const message = responseData.msg
-          return Promise.reject(message);
+          const msg = responseData.msg
+          message.error(msg)
+          return Promise.reject(msg);
         }
       },
       (err: any) => {
-        const message = this.handleErr(err.response.status)
-        return Promise.reject(message);
+        const msg = this.handleErr(err.response)
+        message.error(msg)
+        return Promise.reject(msg);
       }
     );
   }

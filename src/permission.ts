@@ -1,12 +1,12 @@
 
 import router from "@/router";
 import store from './store'
-const whiteList = ['/login', '/',]
+const whiteList = ['/login', '/']
 // 当前登录人所可见的菜单
 
 // 路由前置守卫
 router.beforeEach(async (to, form, next) => {
-  const system_token = localStorage.getItem('system_token')
+  const system_token = sessionStorage.getItem('system_token')
   // 是否有token
   if (!system_token) {
     // 是否是白名单
@@ -23,8 +23,8 @@ router.beforeEach(async (to, form, next) => {
     if (store.getters.permissionRoutes.length) {
       next()
     } else {
-      const userInfo = JSON.parse(localStorage.getItem('info') || '')
-      const accessRouter = await store.dispatch('generateRoutes', [userInfo.position])
+      const userInfo = store.getters.userInfo;
+      const accessRouter = await store.dispatch('generateRoutes', [userInfo.role])
       accessRouter.forEach((e: any) => {
         router.addRoute(e)
       })

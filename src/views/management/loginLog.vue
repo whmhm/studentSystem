@@ -47,12 +47,17 @@ export default defineComponent({
         {
           title: "ip",
           dataIndex: "ip",
-          width: "40%",
+          width: "30%",
         },
         {
           title: "登录时间",
           dataIndex: "loginTime",
-          width: "40%",
+          width: "30%",
+        },
+        {
+          title: "登录状态",
+          dataIndex: "resMsg",
+          width: "20%",
         },
       ],
       pagination: {

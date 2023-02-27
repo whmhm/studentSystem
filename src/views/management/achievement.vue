@@ -17,11 +17,30 @@
         >
       </a-select>
       <span>
-        <a-button class="operations-btn" @click="openSubjectSet">学科管理</a-button>
-        <a-button class="operations-btn" type="primary" @click="importAchievement">导入</a-button>
-        <a-button class="operations-btn" type="text" @click="downloadTemplate">下载模板</a-button>
-        <a-button class="operations-btn" type="primary" @click="exportAchievement">导出</a-button>
-        <a-button class="operations-btn" type="primary" @click="insertAchievement">新增成绩</a-button>
+        <a-button class="operations-btn" @click="openSubjectSet"
+          >学科管理</a-button
+        >
+        <a-button
+          class="operations-btn"
+          type="primary"
+          @click="importAchievement"
+          >导入</a-button
+        >
+        <a-button class="operations-btn" type="text" @click="downloadTemplate"
+          >下载模板</a-button
+        >
+        <a-button
+          class="operations-btn"
+          type="primary"
+          @click="exportAchievement"
+          >导出</a-button
+        >
+        <a-button
+          class="operations-btn"
+          type="primary"
+          @click="insertAchievement"
+          >新增成绩</a-button
+        >
       </span>
     </div>
     <a-table
@@ -135,15 +154,8 @@
   </div>
 </template>
 <script lang="ts">
-import {
-  defineComponent,
-  reactive,
-  ref,
-  toRefs,
-  toRaw,
-  computed,
-  onMounted,
-} from "vue";
+import { defineComponent, reactive, toRefs, computed, onMounted } from "vue";
+import store from "@/store/index";
 import {
   getSemester,
   getSubject,
@@ -157,7 +169,7 @@ import {
   importExcel,
 } from "@/service/service";
 import { message, Modal } from "ant-design-vue";
-import { cloneDeep, reject, values } from "lodash";
+import { cloneDeep } from "lodash";
 import { baseURL } from "@/contents/utils";
 import vUpload from "@/components/upload.vue";
 
@@ -242,7 +254,7 @@ export default defineComponent({
      * 给对应的学期设置学科
      * 成绩导入给对应的学期的学科
      */
-    const userInfo = JSON.parse(localStorage.getItem("info") || "");
+    const userInfo = store.getters.userInfo;
     // 获取表格头部
     const tableColumns = computed(() => {
       if (state.subjectList.length) {

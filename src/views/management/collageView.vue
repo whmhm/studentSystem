@@ -4,7 +4,7 @@
     <div class="notice-operation">
       <a-button type="primary" @click="add">新增</a-button>
     </div>
-    <a-table :columns="columns" :data-source="collageList" bordered :pagination="pagination">
+    <a-table bordered :columns="columns" :data-source="collageList" :pagination="pagination">
       <template #bodyCell="{ column, text, record }">
         <template v-if="['id', 'name'].includes(column.dataIndex)">
           <div>

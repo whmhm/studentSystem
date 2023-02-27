@@ -180,6 +180,14 @@ export const imagesUpload = (data: any): Promise<Result<T>> => {
     data,
   })
 }
+// 公共文件 
+export const fileUpload = (data: any): Promise<Result<T>> => {
+  return RequestAxios.request({
+    url: '/upload/file',
+    method: 'post',
+    data,
+  })
+}
 // 轮播图上传 
 export const carouselUpload = (data: carousel): Promise<Result<T>> => {
   return RequestAxios.request({
@@ -356,7 +364,7 @@ export const getAchievement = (params: getAchievement ): Promise<Result<T>> => {
   })
 }
 // 用户新增
-export const addUser = (data: addUser ): Promise<Result<T>> => {
+export const addUser = (data: any ): Promise<Result<T>> => {
   return RequestAxios.request({
     url: '/user/insert',
     method: 'post',
@@ -372,7 +380,7 @@ export const selectUser = (params: selectUser ): Promise<Result<T>> => {
   })
 }
 // 用户修改
-export const modifyUser = (data: addUser ): Promise<Result<T>> => {
+export const modifyUser = (data: any ): Promise<Result<T>> => {
   return RequestAxios.request({
     url: '/user/update',
     method: 'put',
@@ -404,3 +412,366 @@ export const importExcel = (data: any, params: any): Promise<Result<T>> => {
     params,
   })
 }
+// 奖学金 --- 查询
+export const selectScholarship = (params: any): Promise<Result<T>> => {
+  return RequestAxios.request({
+    url: '/scholarship/selectPage',
+    method: 'get',
+    params,
+  })
+}
+// 奖学金 --- 查询单条
+export const getScholarship = (params: any): Promise<Result<T>> => {
+  return RequestAxios.request({
+    url: '/scholarship/get',
+    method: 'get',
+    params,
+  })
+}
+// 奖学金  --- 删除
+export const deleteScholarship = (params: any): Promise<Result<T>> => {
+  return RequestAxios.request({
+    url: '/scholarship/delete',
+    method: 'delete',
+    params,
+  })
+}
+// 奖学金 --- 新增
+export const insertScholarship = (data: any): Promise<Result<T>> => {
+  return RequestAxios.request({
+    url: '/scholarship/insert',
+    method: 'post',
+    data,
+  })
+}
+// 奖学金 --- 修改
+export const modifyScholarship = (data: any): Promise<Result<T>> => {
+  return RequestAxios.request({
+    url: '/scholarship/update',
+    method: 'put',
+    data,
+  })
+}
+// 学生违规违纪调查表 --- 删除
+export const deleteViolation = (params: any): Promise<Result<T>> => {
+  return RequestAxios.request({
+    url: '/violation/delete',
+    method: 'delete',
+    params,
+  })
+}
+// 学生违规违纪调查表 --- 查询单条数据
+export const getViolation = (params: any): Promise<Result<T>> => {
+  return RequestAxios.request({
+    url: '/violation/get',
+    method: 'get',
+    params,
+  })
+}
+// 学生违规违纪调查表 --- 新增
+export const insertViolation = (data: any): Promise<Result<T>> => {
+  return RequestAxios.request({
+    url: '/violation/insert',
+    method: 'post',
+    data,
+  })
+}
+// 学生违规违纪调查表 --- 新增
+export const updateViolation = (data: any): Promise<Result<T>> => {
+  return RequestAxios.request({
+    url: '/violation/update',
+    method: 'put',
+    data,
+  })
+}
+// 学生违规违纪调查表 --- 分页查询
+export const selectViolation = (params: any): Promise<Result<T>> => {
+  return RequestAxios.request({
+    url: '/violation/selectPage',
+    method: 'get',
+    params,
+  })
+}
+// 专利发 --- 删除
+export const deleteInvention = (params: any): Promise<Result<T>> => {
+  return RequestAxios.request({
+    url: '/patentedInvention/delete',
+    method: 'delete',
+    params,
+  })
+}
+// 专利发 --- 查询单条
+export const getInvention = (params: any): Promise<Result<T>> => {
+  return RequestAxios.request({
+    url: '/patentedInvention/get',
+    method: 'get',
+    params,
+  })
+}
+// 专利发 --- 新增
+export const insertInvention = (data: any): Promise<Result<T>> => {
+  return RequestAxios.request({
+    url: '/patentedInvention/insert',
+    method: 'post',
+    data,
+  })
+}
+// 专利发 --- 分页查询
+export const selectInvention = (params: any): Promise<Result<T>> => {
+  return RequestAxios.request({
+    url: '/patentedInvention/selectPage',
+    method: 'get',
+    params,
+  })
+}
+// 专利发 --- 修改
+export const updateInvention = (data: any): Promise<Result<T>> => {
+  return RequestAxios.request({
+    url: '/patentedInvention/update',
+    method: 'put',
+    data,
+  })
+}
+// 出版和论文发表 -- 删除
+export const deletePaper = (params: any): Promise<Result<T>> => {
+  return RequestAxios.request({
+    url: '/paper/delete',
+    method: 'delete',
+    params,
+  })
+}
+// 出版和论文发表 -- 查询单条
+export const getPaper = (params: any): Promise<Result<T>> => {
+  return RequestAxios.request({
+    url: '/paper/get',
+    method: 'get',
+    params,
+  })
+}
+// 出版和论文发表 -- 新增
+export const insertPaper = (data: any): Promise<Result<T>> => {
+  return RequestAxios.request({
+    url: '/paper/insert',
+    method: 'post',
+    data,
+  })
+}
+// 出版和论文发表 -- 分页查询
+export const selectPaper = (params: any): Promise<Result<T>> => {
+  return RequestAxios.request({
+    url: '/paper/selectPage',
+    method: 'get',
+    params,
+  })
+}
+// 出版和论文发表 -- 分页查询
+export const updatePaper = (data: any): Promise<Result<T>> => {
+  return RequestAxios.request({
+    url: '/paper/update',
+    method: 'put',
+    data,
+  })
+}
+// 助人为乐事迹 -- 删除
+export const deleteHelpGood = (params: any): Promise<Result<T>> => {
+  return RequestAxios.request({
+    url: '/helpGood/delete',
+    method: 'delete',
+    params,
+  })
+}
+// 助人为乐事迹 -- 查询单条
+export const getHelpGood = (params: any): Promise<Result<T>> => {
+  return RequestAxios.request({
+    url: '/helpGood/get',
+    method: 'get',
+    params,
+  })
+}
+// 助人为乐事迹 -- 新增
+export const insertHelpGood = (data: any): Promise<Result<T>> => {
+  return RequestAxios.request({
+    url: '/helpGood/insert',
+    method: 'post',
+    data,
+  })
+}
+// 助人为乐事迹 -- 分页查询
+export const selectHelpGood = (params: any): Promise<Result<T>> => {
+  return RequestAxios.request({
+    url: '/helpGood/selectPage',
+    method: 'get',
+    params,
+  })
+}
+// 助人为乐事迹 -- 修改
+export const updateHelpGood = (data: any): Promise<Result<T>> => {
+  return RequestAxios.request({
+    url: '/helpGood/update',
+    method: 'put',
+    data,
+  })
+}
+// 班干部任职表 -- 删除
+export const deleteClassCadrePost = (params: any): Promise<Result<T>> => {
+  return RequestAxios.request({
+    url: '/classCadrePost/delete',
+    method: 'delete',
+    params,
+  })
+}
+// 班干部任职表 -- 查询单条
+export const getClassCadrePost = (params: any): Promise<Result<T>> => {
+  return RequestAxios.request({
+    url: '/classCadrePost/get',
+    method: 'get',
+    params,
+  })
+}
+// 班干部任职表 -- 新增
+export const insertClassCadrePost = (data: any): Promise<Result<T>> => {
+  return RequestAxios.request({
+    url: '/classCadrePost/insert',
+    method: 'post',
+    data,
+  })
+}
+// 班干部任职表 -- 分页查询
+export const selectClassCadrePost = (params: any): Promise<Result<T>> => {
+  return RequestAxios.request({
+    url: '/classCadrePost/selectPage',
+    method: 'get',
+    params,
+  })
+}
+// 班干部任职表 -- 修改
+export const updateClassCadrePost = (data: any): Promise<Result<T>> => {
+  return RequestAxios.request({
+    url: '/classCadrePost/update',
+    method: 'put',
+    data,
+  })
+}
+// 竞赛参赛表 -- 删除
+export const deleteCompetition = (params: any): Promise<Result<T>> => {
+  return RequestAxios.request({
+    url: '/competition/delete',
+    method: 'delete',
+    params,
+  })
+}
+// 竞赛参赛表 -- 查询单条
+export const getCompetition = (params: any): Promise<Result<T>> => {
+  return RequestAxios.request({
+    url: '/competition/get',
+    method: 'get',
+    params,
+  })
+}
+// 竞赛参赛表 -- 新增
+export const insertCompetition = (data: any): Promise<Result<T>> => {
+  return RequestAxios.request({
+    url: '/competition/insert',
+    method: 'post',
+    data,
+  })
+}
+// 竞赛参赛表 -- 分页查询
+export const selectCompetition = (params: any): Promise<Result<T>> => {
+  return RequestAxios.request({
+    url: '/competition/selectPage',
+    method: 'get',
+    params,
+  })
+}
+// 竞赛参赛表 -- 修改
+export const updateCompetition = (data: any): Promise<Result<T>> => {
+  return RequestAxios.request({
+    url: '/competition/update',
+    method: 'put',
+    data,
+  })
+}
+// 表彰荣誉表 -- 删除
+export const deleteHonor = (params: any): Promise<Result<T>> => {
+  return RequestAxios.request({
+    url: '/honor/delete',
+    method: 'delete',
+    params,
+  })
+}
+// 表彰荣誉表 -- 查询单条
+export const getHonor = (params: any): Promise<Result<T>> => {
+  return RequestAxios.request({
+    url: '/honor/get',
+    method: 'get',
+    params,
+  })
+}
+// 表彰荣誉表 -- 新增
+export const insertHonor = (data: any): Promise<Result<T>> => {
+  return RequestAxios.request({
+    url: '/honor/insert',
+    method: 'post',
+    data,
+  })
+}
+// 表彰荣誉表 -- 分页查询
+export const selectHonor = (params: any): Promise<Result<T>> => {
+  return RequestAxios.request({
+    url: '/honor/selectPage',
+    method: 'get',
+    params,
+  })
+}
+// 表彰荣誉表 -- 修改
+export const updateHonor = (data: any): Promise<Result<T>> => {
+  return RequestAxios.request({
+    url: '/honor/update',
+    method: 'put',
+    data,
+  })
+}
+// 综合成绩 -- 删除
+export const deleteComprehensive = (params: any): Promise<Result<T>> => {
+  return RequestAxios.request({
+    url: '/comprehensive/delete',
+    method: 'delete',
+    params,
+  })
+}
+// 综合成绩 -- 新增
+export const insertComprehensive = (data: any): Promise<Result<T>> => {
+  return RequestAxios.request({
+    url: '/comprehensive/insert',
+    method: 'post',
+    data,
+  })
+}
+// 综合成绩 -- 分页查询
+export const selectComprehensive = (params: any): Promise<Result<T>> => {
+  return RequestAxios.request({
+    url: '/comprehensive/selectPage',
+    method: 'get',
+    params,
+  })
+}
+// 综合成绩 -- 修改
+export const updateComprehensive = (data: any): Promise<Result<T>> => {
+  return RequestAxios.request({
+    url: '/comprehensive/update',
+    method: 'put',
+    data,
+  })
+}
+// 综合成绩 -- 汇算
+export const settleAccounts = (params: any): Promise<Result<T>> => {
+  return RequestAxios.request({
+    url: '/comprehensive/settleAccounts',
+    method: 'get',
+    params,
+  })
+}
+
+
+

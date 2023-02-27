@@ -4,14 +4,16 @@
     <div class="new-operation">
       <a-button type="primary" @click="add">新增</a-button>
     </div>
-    <a-table :columns="columns" :data-source="newsList" bordered :pagination="pagination">
+    <a-table bordered :columns="columns" :data-source="newsList" :pagination="pagination">
       <template #bodyCell="{ column, text, record }">
-        <template v-if="['name', 'age', 'address'].includes(column.dataIndex)">
+        <template v-if="['noticeTitle', 'noticeContent', 'heat','createBy'].includes(column.dataIndex)">
           <div>
-            <a-input v-if="editableData[record.key]" v-model:value="editableData[record.key][column.dataIndex]" style="margin: -5px 0" />
-            <template v-else>
-              {{ text }}
-            </template>
+            {{ text }}
+          </div>
+        </template>
+        <template v-else-if="column.dataIndex === 'createTime'">
+          <div>
+            {{ formatDate(text) }}
           </div>
         </template>
         <template v-else-if="column.dataIndex === 'operation'">
@@ -29,7 +31,7 @@
     <!-- -->
     <!-- 新增、编辑 -->
     <a-modal v-model:visible="visible" title="资讯" :footer="false">
-      <a-form :model="formState" name="nest-messages" :validate-messages="validateMessages">
+      <a-form :model="formState" name="nest-messages">
         <a-form-item name="noticeTitle" label="标题">
           <a-input v-model:value="formState.noticeTitle" />
         </a-form-item>
@@ -61,13 +63,6 @@ export default defineComponent({
     interface news {
       id: number;
     }
-    interface FormData {
-      noticeContent: string;
-      noticeTitle: string;
-      noticeType: number;
-      heat: string;
-      createBy: string;
-    }
     interface modifyData {
       id: number;
       noticeContent: string;
@@ -76,16 +71,8 @@ export default defineComponent({
       heat: string;
       createBy: string;
     }
-    // const router = useRoute();
     const dataList = reactive({
-      newsList: [
-        {
-          id: 12,
-          noticeTitle: '123132',
-          noticeContent: '123123',
-          heat: '123',
-        },
-      ],
+      newsList: [],
       columns: [
         {
           title: '资讯标题',
@@ -95,7 +82,7 @@ export default defineComponent({
         {
           title: '资讯内容',
           dataIndex: 'noticeContent',
-          width: '40%',
+          width: '30%',
         },
         {
           title: '阅读次数',
@@ -108,7 +95,12 @@ export default defineComponent({
           width: '10%',
         },
         {
+          title: '创建时间',
+          dataIndex: 'createTime',
+        },
+        {
           title: '操作',
+           width: '10%',
           dataIndex: 'operation',
         },
       ],
@@ -230,6 +222,16 @@ export default defineComponent({
       dataList.visible = false;
       resetFields();
     };
+    const formatDate = (val: any) => {
+      const date = new Date(val)
+      const YY = date.getFullYear()
+      const MM = date.getMonth() + 1 > 10 ? date.getMonth() + 1 : `0${date.getMonth() + 1}`
+      const DD = date.getDay()> 10 ? date.getDay() : `0${date.getDay()}`
+      const hh = date.getHours() > 10 ? date.getHours() : `0${date.getHours()}`
+      const mm = date.getMinutes()> 10 ? date.getMinutes() : `0${date.getMinutes()}`
+      const ss = date.getSeconds()> 10 ? date.getSeconds() : `0${date.getSeconds()}`
+      return `${YY}-${MM}-${DD} ${hh}:${mm}:${ss}`
+    }
     const errorInfos = computed(() => {
       return mergeValidateInfo(toArray(validateInfos));
     });
@@ -242,6 +244,7 @@ export default defineComponent({
       ...toRefs(dataList),
       formState,
       rulesRef,
+      formatDate,
       edit,
       remove,
       add,

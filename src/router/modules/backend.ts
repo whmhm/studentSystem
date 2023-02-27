@@ -5,7 +5,6 @@ import newsView from '@/views/management/newsView.vue'
 import noticeView from '@/views/management/noticeView.vue'
 import collageView from '@/views/management/collageView.vue'
 import managementView from '@/views/management/index.vue'
-import achievementView from '@/views/management/achievement.vue'
 import carouselView from '@/views/management/carouselView.vue'
 // 后端的路由
 const backendRouter: Array<RouteRecordRaw> = [
@@ -32,22 +31,68 @@ const backendRouter: Array<RouteRecordRaw> = [
       },
       {
         path: '',
-        name: '成绩管理',
+        name: '综合成绩管理',
         children: [
           {
             path: '/achievement',
-            name: '成绩管理',
-            component: achievementView,
-          }
+            name: '学科成绩',
+            component: () => import(/* webpackChunkName: "achievement" */ '../../views/management/achievement.vue'),
+          },
+          {
+            path: '/competition',
+            name: '参加竞赛',
+            component: () => import(/* webpackChunkName: "competition" */ '../../views/management/competition.vue'),
+          },
+          {
+            path: '/honor',
+            name: '表彰荣誉',
+            component: () => import(/* webpackChunkName: "honor" */ '../../views/management/honor.vue'),
+          },
+          {
+            path: '/paper',
+            name: '出版或发表论文',
+            component: () => import(/* webpackChunkName: "paper" */ '../../views/management/paper.vue'),
+          },
+          {
+            path: '/scholarship',
+            name: '奖学金',
+            component: () => import(/* webpackChunkName: "scholarship" */ '../../views/management/scholarship.vue'),
+          },
+          {
+            path: '/helpGood',
+            name: '助人为乐',
+            component: () => import(/* webpackChunkName: "helpGood" */ '../../views/management/helpGood.vue'),
+          },
+
+          {
+            path: '/invention',
+            name: '专利',
+            component: () => import(/* webpackChunkName: "invention" */ '../../views/management/invention.vue'),
+          },
+          {
+            path: '/violation',
+            name: '违规违纪',
+            component: () => import(/* webpackChunkName: "violation" */ '../../views/management/violation.vue'),
+          },
+          {
+            path: '/comprehensive',
+            name: '综合素质测评',
+            component: () => import(/* webpackChunkName: "comprehensive" */ '../../views/management/comprehensive.vue'),
+          },
         ]
       },
       {
         path: '',
         name: '人员管理',
-        meta: {
-          roles: ['ADMIN', 'INSTRUCTOR'],
-        },
         children: [
+          {
+            path: '/classCadrePost',
+            name: '班干部任职',
+            meta: {
+              roles: ['ADMIN', 'INSTRUCTOR', 'STUDENT'],
+            },
+            component: () => import(/* webpackChunkName: "classCadrePost" */ '../../views/management/classCadrePost.vue')
+          },
           {
             path: '/students',
             name: '学生管理',

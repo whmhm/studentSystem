@@ -4,7 +4,7 @@
     <div class="notice-operation">
       <a-button type="primary" @click="add">新增</a-button>
     </div>
-    <a-table :columns="columns" :data-source="newsList" bordered :pagination="pagination">
+    <a-table bordered :columns="columns" :data-source="newsList" :pagination="pagination">
       <template #bodyCell="{ column, text, record }">
         <template v-if="['name', 'age', 'address'].includes(column.dataIndex)">
           <div>
@@ -12,6 +12,11 @@
             <template v-else>
               {{ text }}
             </template>
+          </div>
+        </template>
+        <template v-else-if="column.dataIndex === 'createTime'">
+          <div>
+            {{ formatDate(text) }}
           </div>
         </template>
         <template v-else-if="column.dataIndex === 'operation'">
@@ -75,14 +80,7 @@ export default defineComponent({
       createBy: string;
     }
     const dataList = reactive({
-      newsList: [
-        {
-          id: 12,
-          noticeTitle: '123132',
-          noticeContent: '123123',
-          heat: '123',
-        },
-      ],
+      newsList: [],
       columns: [
         {
           title: '公告标题',
@@ -90,9 +88,9 @@ export default defineComponent({
           width: '20%',
         },
         {
-          title: '自信内容',
+          title: '公告内容',
           dataIndex: 'noticeContent',
-          width: '40%',
+          width: '35%',
         },
         {
           title: '阅读次数',
@@ -105,8 +103,13 @@ export default defineComponent({
           width: '10%',
         },
         {
+          title: '创建时间',
+          dataIndex: 'createTime',
+        },
+        {
           title: '操作',
           dataIndex: 'operation',
+          width: '10%',
         },
       ],
       pagination: {
@@ -193,7 +196,7 @@ export default defineComponent({
       modify.value = false;
       formState.noticeTitle = '';
       formState.noticeContent = '';
-      resetFields()
+      resetFields();
       dataList.visible = true;
     };
     // 提交
@@ -230,6 +233,21 @@ export default defineComponent({
       dataList.visible = false;
       resetFields();
     };
+    const formatDate = (val: any) => {
+      const date = new Date(val);
+      const YY = date.getFullYear();
+      const MM =
+        date.getMonth() + 1 > 10
+          ? date.getMonth() + 1
+          : `0${date.getMonth() + 1}`;
+      const DD = date.getDay() > 10 ? date.getDay() : `0${date.getDay()}`;
+      const hh = date.getHours() > 10 ? date.getHours() : `0${date.getHours()}`;
+      const mm =
+        date.getMinutes() > 10 ? date.getMinutes() : `0${date.getMinutes()}`;
+      const ss =
+        date.getSeconds() > 10 ? date.getSeconds() : `0${date.getSeconds()}`;
+      return `${YY}-${MM}-${DD} ${hh}:${mm}:${ss}`;
+    };
     const errorInfos = computed(() => {
       return mergeValidateInfo(toArray(validateInfos));
     });
@@ -242,6 +260,7 @@ export default defineComponent({
       ...toRefs(dataList),
       formState,
       rulesRef,
+      formatDate,
       edit,
       remove,
       add,

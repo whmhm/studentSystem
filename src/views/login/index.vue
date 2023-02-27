@@ -5,33 +5,51 @@
     <!-- 用户登录 -->
     <div class="login-panel">
       <p class="panel-title">用户登录</p>
-      <a-form :model="formState" :label-col="{ span: 6 }" :wrapper-col="{ span: 16 }" autocomplete="off" @finish="onFinish" @finishFailed="onFinishFailed">
-        <a-form-item label="用户名" name="sno" :rules="[{ required: true, message: '请输入用户名!' }]">
+      <a-form
+        :model="formState"
+        :label-col="{ span: 6 }"
+        :wrapper-col="{ span: 16 }"
+        autocomplete="off"
+        @finish="onFinish"
+      >
+        <a-form-item
+          label="用户名"
+          name="sno"
+          :rules="[{ required: true, message: '请输入用户名!' }]"
+        >
           <a-input v-model:value="formState.sno" />
         </a-form-item>
 
-        <a-form-item label="密码" name="password" :rules="[{ required: true, message: '请输入密码!' }]">
+        <a-form-item
+          label="密码"
+          name="password"
+          :rules="[{ required: true, message: '请输入密码!' }]"
+        >
           <a-input-password v-model:value="formState.password" />
         </a-form-item>
 
         <a-form-item :wrapper-col="{ offset: 2, span: 20 }">
-          <a-button class="submit-btn" type="primary" html-type="submit">登录</a-button>
+          <a-button class="submit-btn" type="primary" html-type="submit"
+            >登录</a-button
+          >
         </a-form-item>
       </a-form>
     </div>
   </div>
 </template>
 <script lang="ts">
-import { defineComponent, reactive } from 'vue';
-import { useRouter } from 'vue-router';
-import { message } from 'ant-design-vue';
-import { login, getUserInfo } from '@/service/service';
+import { defineComponent, reactive } from "vue";
+import { useRouter } from "vue-router";
+import { message } from "ant-design-vue";
+import { login, getUserInfo } from "@/service/service";
+import { reject } from "lodash";
+import store from "@/store";
 interface FormState {
   sno: string;
   password: string;
 }
 interface userInfo {
-  sno: string
+  sno: string;
 }
 // remember: boolean;
 export default defineComponent({
@@ -40,28 +58,31 @@ export default defineComponent({
     const router = useRouter();
     // 用户登录表单
     const formState = reactive<FormState>({
-      sno: '',
-      password: '',
+      sno: "",
+      password: "",
     });
     // 提交表单
     const onFinish = (value: FormState): void => {
-      login(value).then((res: any) => {
+      login(value).then(async (res: any) => {
         if (res.code === 200) {
-          localStorage.setItem('system_token', res.data);
-          router.push('/index');
-          getUser({sno: formState.sno})
-
+          sessionStorage.setItem("system_token", res.data);
+          await getUser({ sno: formState.sno });
+          router.push("/index");
         } else {
           message.warning(res.msg);
         }
       });
     };
     // 获取个人信息
-    const getUser = (value: userInfo):void => {
-      getUserInfo(value).then((res: any) => {
-        localStorage.setItem('info', JSON.stringify(res.data));
-      })
-    }
+    const getUser = (value: userInfo) => {
+      return new Promise((resolve, reject) => {
+        getUserInfo(value).then((res: any) => {
+          sessionStorage.setItem("info", JSON.stringify(res.data));
+          store.commit("SET_USER_INFO", JSON.stringify(res.data));
+          resolve(true);
+        });
+      });
+    };
     return {
       formState,
       onFinish,

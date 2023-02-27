@@ -13,14 +13,25 @@ export const constantRoutes: Array<RouteRecordRaw> = [
   // 前台
   {// 首页  
     path: '/',
-    name: 'home',
     component: frontEnd,
     children: [
       {
         path: '',
+        name: 'home',
         component: HomeView
       }
     ],
+  },
+  {
+    path: '/person',
+    name: '账户管理',
+    children: [
+      {
+        path: '/person',
+        name: '个人中心',
+        component: () => import(/* webpackChunkName: "person" */ '../views/person/index.vue')
+      }
+    ]
   },
   ...loginRouter,
   {
